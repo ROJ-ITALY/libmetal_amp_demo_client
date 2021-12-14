@@ -64,8 +64,8 @@ int ipi_latency_demo();
 
 static inline void wait_for_interrupt()
 {
-	//asm volatile("wfi"); //used server side
-	asm volatile("yield"); //used client side
+	asm volatile("wfi"); //used server side
+	//asm volatile("yield"); //used client side
 }
 
 /**
@@ -97,6 +97,33 @@ static inline void  wait_for_notified(atomic_flag *notified)
 static inline void print_demo(char *name)
 {
 	LPRINTF("****** libmetal demo: %s ******\n", name);
+}
+
+/**
+ * basic statistics
+ */
+struct metal_stat {
+	uint64_t st_cnt;
+	uint64_t st_sum;
+	uint64_t st_min;
+	uint64_t st_max;
+};
+#define STAT_INIT { .st_cnt = 0, .st_sum = 0, .st_min = ~0UL, .st_max = 0, }
+
+/**
+ * @brief update_stat() - update basic statistics
+ *
+ * @param[in] pst   - pointer to the struct stat
+ * @param[in] val - the value for the update
+ */
+static inline void update_stat(struct metal_stat *pst, uint64_t val)
+{
+	pst->st_cnt++;
+	pst->st_sum += val;
+	if (pst->st_min > val)
+		pst->st_min = val;
+	if (pst->st_max < val)
+		pst->st_max = val;
 }
 
 #endif /* __COMMON_H__ */

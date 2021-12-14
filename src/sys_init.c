@@ -316,7 +316,7 @@ int sys_init()
 	int ret;
 
 	enable_caches();
-	init_uart();
+//	init_uart();
 	if (init_irq()) {
 		LPERROR("Failed to initialize interrupt\n");
 	}
