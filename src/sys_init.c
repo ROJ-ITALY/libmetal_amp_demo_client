@@ -9,6 +9,8 @@
 #include <metal/sys.h>
 #include <metal/irq.h>
 
+#include "xil_mmu.h"
+
 #include "platform_config.h"
 #include "common.h"
 
@@ -26,11 +28,10 @@
 #define TTC0_BASE_ADDR  0xFF110000
 #define IPI_BASE_ADDR   0xFF340000
 
-/* Copy from xreg_cortexr5.h. Not present in xreg_cortexa53.h*/
-#define DEVICE_NONSHARED		0x00000010U	/*device, non shareable*/
-#define	PRIV_RW_USER_RW			(0x00000003U<<8U)	/*Full Access*/
-#define NORM_SHARED_NCACHE 		0x0000000CU 	/*Outer and Inner Non cacheable shareable*/
-
+/* Set mem_flags for Cortex A53. Defined in xil_mmu.h. */
+#define DEVICE_NONSHARED		DEVICE_MEMORY			/* Device memory (Device-nGnRE)*/
+//#define	PRIV_RW_USER_RW		(0x00000003U<<8U)		/*Full Access used for Cortex R5*/
+#define NORM_SHARED_NCACHE 		NORM_NONCACHE			/* Normal Non-cacheable*/
 
 /* Default generic I/O region page shift */
 /* Each I/O region can contain multiple pages.
@@ -74,7 +75,7 @@ static struct metal_device metal_dev_table[] = {
 				.size = 0x1000,
 				.page_shift = DEFAULT_PAGE_SHIFT,
 				.page_mask = DEFAULT_PAGE_MASK,
-				.mem_flags = DEVICE_NONSHARED | PRIV_RW_USER_RW,
+				.mem_flags = DEVICE_NONSHARED,
 				.ops = {NULL},
 			}
 		},
@@ -94,8 +95,7 @@ static struct metal_device metal_dev_table[] = {
 				.size = 0x1000000,
 				.page_shift = DEFAULT_PAGE_SHIFT,
 				.page_mask = DEFAULT_PAGE_MASK,
-				.mem_flags = NORM_SHARED_NCACHE |
-						PRIV_RW_USER_RW,
+				.mem_flags = NORM_SHARED_NCACHE,
 				.ops = {NULL},
 			}
 		},
@@ -115,7 +115,7 @@ static struct metal_device metal_dev_table[] = {
 				.size = 0x1000,
 				.page_shift = DEFAULT_PAGE_SHIFT,
 				.page_mask = DEFAULT_PAGE_MASK,
-				.mem_flags = DEVICE_NONSHARED | PRIV_RW_USER_RW,
+				.mem_flags = DEVICE_NONSHARED,
 				.ops = {NULL},
 			}
 		},
@@ -263,17 +263,17 @@ int open_metal_devices(void)
 		goto out;
 	}
 
-	/* Open IPI device */
-	ret = metal_device_open(BUS_NAME, IPI_DEV_NAME, &ipi_dev);
-	if (ret) {
-		LPERROR("Failed to open device %s.\n", IPI_DEV_NAME);
-		goto out;
-	}
-
 	/* Open TTC device */
 	ret = metal_device_open(BUS_NAME, TTC_DEV_NAME, &ttc_dev);
 	if (ret) {
 		LPERROR("Failed to open device %s.\n", TTC_DEV_NAME);
+		goto out;
+	}
+
+	/* Open IPI device */
+	ret = metal_device_open(BUS_NAME, IPI_DEV_NAME, &ipi_dev);
+	if (ret) {
+		LPERROR("Failed to open device %s.\n", IPI_DEV_NAME);
 		goto out;
 	}
 
@@ -315,7 +315,7 @@ int sys_init()
 	struct metal_init_params metal_param = METAL_INIT_DEFAULTS;
 	int ret;
 
-	enable_caches();
+//	enable_caches();
 //	init_uart();
 	if (init_irq()) {
 		LPERROR("Failed to initialize interrupt\n");

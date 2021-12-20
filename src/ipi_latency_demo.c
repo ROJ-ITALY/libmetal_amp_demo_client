@@ -238,7 +238,7 @@ int ipi_latency_demo()
 	int ipi_irq;
 	int ret = 0;
 	asm volatile ("hvc 0xfffd");
-	LPRINTF("2: I'm here.\n");
+	LPRINTF("PHASE 13");
 	print_demo("IPI latency");
 	memset(&ch, 0, sizeof(ch));
 
