@@ -34,9 +34,24 @@ int main(void)
 		LPERROR("Failed to initialize system.\n");
 		return ret;
 	}
+
 	ret = ipi_latency_demo();
 	if (ret) {
 		LPERROR("IPI latency demo failed.\n");
+		goto out;
+	}
+
+	sleep(1);
+	ret = shmem_latency_demo();
+	if (ret) {
+		LPERROR("shared memory latency demo failed.\n");
+		goto out;
+	}
+
+	sleep(1);
+	ret = shmem_throughput_demo();
+	if (ret) {
+		LPERROR("shared memory throughput demo failed.\n");
 		goto out;
 	}
 
