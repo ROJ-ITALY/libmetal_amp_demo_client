@@ -89,6 +89,9 @@ static inline void reset_timer(struct metal_io_region *ttc_io,
 				XTTCPS_CNT_OFFSET(cnt_id);
 
 	val = XTTCPS_CNT_CNTRL_RST_MASK;
+
+	metal_io_read32(ttc_io, offset);
+
 	metal_io_write32(ttc_io, offset, val);
 }
 
@@ -237,7 +240,7 @@ int ipi_latency_demo()
 	struct channel_s ch;
 	int ipi_irq;
 	int ret = 0;
-	//asm volatile ("hvc 0xfffd");
+	asm volatile ("hvc 0xfffd");
 	print_demo("IPI latency");
 	memset(&ch, 0, sizeof(ch));
 

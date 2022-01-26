@@ -22,7 +22,7 @@
 #define BUS_NAME        "generic"
 #define IPI_DEV_NAME    "ff340000.ipi"
 #define SHM_DEV_NAME    "3ed80000.shm"
-#define TTC_DEV_NAME    "ff110000.ttc"
+#define TTC_DEV_NAME    "ff120000.ttc"
 
 /* IPI registers offset */
 #define IPI_TRIG_OFFSET 0x0  /* IPI trigger reg offset */
@@ -65,7 +65,7 @@ int ipi_latency_demo();
 static inline void wait_for_interrupt()
 {
 	asm volatile("wfi"); //used server side
-	//asm volatile("yield"); //used client side
+	//asm volatile("yield"); //used client Linux side
 }
 
 /**
