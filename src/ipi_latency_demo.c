@@ -89,9 +89,6 @@ static inline void reset_timer(struct metal_io_region *ttc_io,
 				XTTCPS_CNT_OFFSET(cnt_id);
 
 	val = XTTCPS_CNT_CNTRL_RST_MASK;
-
-	metal_io_read32(ttc_io, offset);
-
 	metal_io_write32(ttc_io, offset, val);
 }
 

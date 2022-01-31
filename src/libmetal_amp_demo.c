@@ -15,9 +15,9 @@ int main(void)
 {
 
 // Only for Debug DomU baremetal
-	volatile bool loop=true;
-	while (loop)
-		;
+//	volatile bool loop=true;
+//	while (loop)
+//		;
 
 #ifdef NOXEN
 	XUartPs_Config *Config;
